@@ -1,22 +1,20 @@
+""" 
+    Linkedin Company Data Enricher
+    Finds employee information from a target company
+"""
+
+import os
 import datetime
 import calendar
 import json
+from hashlib import sha256
 import pandas as pd
-import numpy as np
-import os
-import random
-
-# TODO change to original Linkedin but not that it wont work unlesss pointing to branch
 from linkedin_api import Linkedin
 from linkedin_api.utils import helpers
-from time import sleep
 from google.cloud import storage
-from hashlib import sha256
-
-## TODO Do we need to wait for not being baned?
 
 
-class Linkedin_Company_Data_Enricher(object):
+class LinkedinCompanyDataEnricher(object):
     """
     Class for accessing Company Data Enricher functions
     """
@@ -35,12 +33,15 @@ class Linkedin_Company_Data_Enricher(object):
         self.today_datetime_stringified = today_datetime.strftime("%Y-%m-%dT%H:%M:%S")
         self.today_datetime_timestamp = int(today_datetime.timestamp())
 
-        GCP_BUCKET_NAME = "job-hunt-company-analyser"
+        gcp_bucket_name = "job-hunt-company-analyser"
 
         storage_client = storage.Client()
-        self.bucket = storage_client.get_bucket(GCP_BUCKET_NAME)
+        self.bucket = storage_client.get_bucket(gcp_bucket_name)
 
     def map_company(self, searched_company):
+        """
+        Maps searched company to desired CSV output format
+        """
         searched_company_urn = searched_company["urn_id"]
         searched_company_title = searched_company["name"]
         searched_company_industry = searched_company["headline"].split(" • ")[0]
@@ -62,6 +63,9 @@ class Linkedin_Company_Data_Enricher(object):
         return searched_company_dict
 
     def store_data(self, file_name, searched_company_title, data):
+        """
+        Stores data in CSV GCP bucket
+        """
         file_name_company_name = searched_company_title.replace(" ", "_").lower()
         file_name_date = self.today_datetime_timestamp
         file_name_csv = f"{file_name}_{file_name_company_name}_{file_name_date}"
@@ -73,6 +77,10 @@ class Linkedin_Company_Data_Enricher(object):
         )
 
     def store_search_log(self, input_parameters):
+        """
+        Stores search log CSV data into GCP
+        """
+
         search_log_dict = self.map_company(input_parameters["company"])
         search_log_dict["search_filters"] = input_parameters["search_filters"]
         searched_company_title = input_parameters["company"]["name"]
@@ -81,6 +89,9 @@ class Linkedin_Company_Data_Enricher(object):
 
     # Split in past and present because we want a few of each
     def get_past_employees(self, searched_company_urn, limit):
+        """
+        Retrieves past employees data for target company
+        """
         employees = self.api.search_people(
             past_companies=[searched_company_urn], limit=limit
         )
@@ -88,6 +99,9 @@ class Linkedin_Company_Data_Enricher(object):
         return employees
 
     def get_present_employees(self, searched_company_urn, limit):
+        """
+        Retrieves current employees data for target company
+        """
         employees = self.api.search_people(
             current_company=[searched_company_urn], limit=limit
         )
@@ -95,6 +109,9 @@ class Linkedin_Company_Data_Enricher(object):
         return employees
 
     def get_employees_experience(self, profile, searched_company_title):
+        """
+        Retrieve employees experience from employees profile
+        """
         employees_experience = []
         urn = helpers.get_id_from_urn(profile["entityUrn"])
 
@@ -170,7 +187,10 @@ class Linkedin_Company_Data_Enricher(object):
 
         return employees_experience
 
-    def get_employees_education(self, profile, searched_company_title):
+    def get_employees_education(self, profile):
+        """
+        Retrieve employees education from employees profile
+        """
         employees_education = []
 
         urn = helpers.get_id_from_urn(profile["entityUrn"])
@@ -208,6 +228,9 @@ class Linkedin_Company_Data_Enricher(object):
         return employees_education
 
     def get_and_store_employees_data(self, employees_all_list, searched_company_title):
+        """
+        Get and store employees experience and education
+        """
         employees_experience = []
         employees_education = []
         for employee in employees_all_list:
@@ -223,9 +246,7 @@ class Linkedin_Company_Data_Enricher(object):
             )
             employees_experience += employee_experience
 
-            employee_education = self.get_employees_education(
-                profile, searched_company_title
-            )
+            employee_education = self.get_employees_education(profile)
             employees_education += employee_education
 
         self.store_data(
@@ -236,6 +257,9 @@ class Linkedin_Company_Data_Enricher(object):
         )
 
     def run(self, input_parameters):
+        """
+        Run functions to get and store employees experience and education for target company
+        """
         company_urn = input_parameters["company"]["urn_id"]
         company_name = input_parameters["company"]["name"]
         limit = input_parameters["search_filters"]["limit"]
@@ -248,4 +272,4 @@ class Linkedin_Company_Data_Enricher(object):
 
         employees = past_employees_list + present_employees_list
 
-        employee_data = self.get_and_store_employees_data(employees, company_name)
+        self.get_and_store_employees_data(employees, company_name)
