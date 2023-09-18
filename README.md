@@ -45,7 +45,7 @@ Having fixed the issue, I was able to start with my project.
 
 ## Architecture and Logic
 
-[ DIAGRAM ]
+![Diagram](images/diagram1.png)
 
 The logic to collect the data is as follows:
 1. Run `search_companies(keywords = company_to_look)` in order to find the company's URN (ID) I want to analyse
@@ -67,27 +67,36 @@ Why did I use Google Cloud Platform for this project? GCP has a really generous 
 Note:
 This is the first draft of what was supposed to be the architecture of the project:
 
-[ DIGRAM 2]
+![Draft Diagram](images/diagram2.png)
 
 I planned to run the script on a Cloud Function triggered from my local every time I had a new target company to analyse. However, Linkedin API returns a [CHALLENGE error](https://github.com/tomquirk/linkedin-api#i-keep-getting-a-challenge) that is known in the package and I haven't had the chance and time to solve.
 
 
-## Formula
-I've attempted to score from 0 to 10 how good a company culture is based on the given employee data:
-- Data roles have higher weight on the equation. Then followed by Software Engineering roles and rest of roles
-- Comparison of time in target company to time in previous company is important
-- Internships are excluded and contractors (can we find out this?)
-- We take as benchmark an average of the top 5 and last 5 companies to work for and use that as MIN and MAX for our scoring
-- Scale the data between 0 and 10
-- Younger people have higher weight??
+## Metrics
+As mentioned earlier, the main metric I wanted to take a look is: how long do employees stay in a target company and how long have they stayed in previous companies?
 
-Variables for employees that have left:
-- Number of employees that leave company every month. Get an average. The lower the better
-- Time stayed in this company compared average time stayed in others.
+Therefore the metric is calculated as:
+`avg_ratio_months_in_target_company_vs_others = average months in target company / average months in previous companies`
 
-Variables for employees currently in the company:
-- How many have surpassed the time that they stay compared to previous companies compared to the total of employees
+I retrieve these metrics:
+- avg_ratio_months_in_target_company_vs_others
+- avg_months_in_target_company
+- avg_months_in_other_companies
 
+How do I know what metric values are good? We take as benchmark an average of the top 5 and last 5 companies to work for extracted from different sources when looking for "Best companies to work for" in Google. We use those values to compare target companies with them
 
-**Other applications**
-This data might be useful for recruiters. Or to understand competitors?
+Notes:
+- I've split calculations between two types of roles: Data/Software and others. This is because I'm applying for Data roles so I'm more interested in metrics regarding these types of roles
+- I'm only looking at past roles (not employees currently working at target company) because I want to analyse patients that left. This might skew the data though since there might be "happy" employees that haven't left the company and I haven't taken them into account but they might be included in a follow up analysis
+- Internships are excluded
+
+## Conclusions
+Find below a screenshot with metrics calcualted for a few companies retrieved.
+
+[ Screenshot ]
+
+Do we see that publicly known good companies have higher metric score and bad companies have lower metric score?
+
+Can we prove the assumption that software related roles tend to stay in a company 2-3 years independently of the culture of the company?
+
+The project developed here might be useful for recruiters wanting to know more about a company and to candidates looking to get a better understanding of a company's culture
