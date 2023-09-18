@@ -54,7 +54,7 @@ companies_avg_ratio as (
     {{ dbt_utils.generate_surrogate_key([
         'target_company_name',
         'are_roles_in_target_list'
-    ]) }} as company_grouped_by_roles_id,
+    ]) }} as company_grouped_by_role_type_id,
     target_company_name,
     are_roles_in_target_list,
     avg(avg_months_in_target_company) as avg_months_in_target_company,

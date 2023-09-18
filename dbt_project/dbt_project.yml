@@ -35,6 +35,6 @@ models:
     staging:
       materialized: table
       schema: staging
-    intermediate:
+    common:
       materialized: table
-      schema: intermediate
+      schema: common
