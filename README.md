@@ -90,13 +90,44 @@ Notes:
 - I'm only looking at past roles (not employees currently working at target company) because I want to analyse patients that left. This might skew the data though since there might be "happy" employees that haven't left the company and I haven't taken them into account but they might be included in a follow up analysis
 - Internships are excluded
 
+## Proving assumptions
+
+**Can we prove the assumption that software related roles tend to stay in a company 2-3 years independently of the culture of the company?**
+
+| are_roles_in_target_list | avg_months_in_other_companies | avg_months_in_target_company | number_of_roles |   |
+|--------------------------|-------------------------------|------------------------------|-----------------|---|
+| false                    |                            25 |                           24 |             176 |   |
+| true                     |                            17 |                           19 |             103 |   |
+|                          |                               |                              |                 |   |
+
+We'll need to perform a T-test to check if the two populations have different means
+- Null hypothesis: The two populations have same mean
+- Alternative hypothesis: The two populations have different means
+
+Running a simple t-test:
+
+```
+
+import pandas as pd
+from scipy import stats
+
+df = pd.read_csv('extract_of_stg_employees_experience.csv')
+
+group_a = list(df.query('is_role_in_target_list == False')['months_in_company'])
+group_b = list(df.query('is_role_in_target_list == True')['months_in_company'])
+
+stats.ttest_ind(group_a, group_b, equal_var = False)
+
+```
+
+We find out that `Ttest_indResult(statistic=0.39388361215871504, pvalue=0.6937392362849801)`
+p-value is 0.69 so we can't really reject the null hypothesis and we can't say that the assumption is correct
+
+**Do we see that publicly known good companies have higher metric score and bad companies have lower metric score?**
+
+In this case we can create two groups: companies rated as "best companies to work for" and "worst companies to work for". Once we get these two groups, we perform another two sample t-test as before and check our hypothesis
+
 ## Conclusions
-Find below a screenshot with metrics calcualted for a few companies retrieved.
+I've developed this project as a personal interest on finding out if the quality of the culture of a company can be infered from the employees rotation. We can say for the moment that the outcome is inconclusive, and as defined in the drawbacks that was something more or less expected. However, I still found useful to ran this analysis since it gives me more data in order to evaluate the companies I am applying fro.
 
-[ Screenshot ]
-
-Do we see that publicly known good companies have higher metric score and bad companies have lower metric score?
-
-Can we prove the assumption that software related roles tend to stay in a company 2-3 years independently of the culture of the company?
-
-The project developed here might be useful for recruiters wanting to know more about a company and to candidates looking to get a better understanding of a company's culture
+This data might be also useful recruiters wanting to know more about a company and other candidates looking to get a better understanding of a company's culture.
