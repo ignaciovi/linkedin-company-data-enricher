@@ -1,0 +1,12 @@
+
+version: 2
+
+models:
+  - name: companies_stats_grouped_by_role_type
+    description: "Companies with stats related to culture"
+    columns:
+      - name: company_grouped_by_role_type_id
+        description: "The primary key for this table"
+        tests:
+          - unique
+          - not_null

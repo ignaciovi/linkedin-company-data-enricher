@@ -1,6 +1,23 @@
 with employees_experience as (  
     select    
-        *,    
+        {{ dbt_utils.generate_surrogate_key([
+        'employee_urn',
+        'title',
+        'company_name',
+        'start_date'
+         ]) }} as employee_experience_id,        
+        employee_urn,
+        title,
+        industry,	
+        company_name,	
+        is_target_company,		
+        start_date_month,			
+        start_date_year,			
+        start_date,		
+        end_date_month,		
+        end_date_year,		
+        end_date,			
+        scraped_at,
         row_number() over(partition by employee_urn, title, company_name order by scraped_at desc) rn  
     from {{ source('raw_linkedinapi', 'employees_experience') }}
 ),
