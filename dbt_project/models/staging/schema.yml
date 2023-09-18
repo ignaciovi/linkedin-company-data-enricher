@@ -1,0 +1,12 @@
+
+version: 2
+
+models:
+  - name: stg_linkedinapi__employees_experience_last_updated
+    description: "Enriched version of employees experience extracting most up to date record"
+    columns:
+      - name: id
+        description: "The primary key for this table"
+        tests:
+          - unique
+          - not_null

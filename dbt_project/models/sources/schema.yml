@@ -1,0 +1,14 @@
+version: 2
+
+sources:
+  - name: raw_linkedinapi
+    description: Raw Linkedin data
+
+    tables:
+      - name: employees_experience
+        description: Employees experience
+        columns:
+          - name: id
+            tests:
+              - unique
+              - not_null
