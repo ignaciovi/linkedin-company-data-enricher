@@ -1,6 +1,6 @@
 """ 
     Linkedin Company Data Enricher
-    Finds employee information from a target company
+    Retrieves employees information from a given target company using LinkedinAPI
 """
 
 import os
@@ -29,7 +29,6 @@ class LinkedinCompanyDataEnricher(object):
         self.api = Linkedin(username, password)
         os.environ["GOOGLE_APPLICATION_CREDENTIALS"] = "./storage-service-account.json"
         today_datetime = datetime.datetime.now()
-        self.today_datetime = today_datetime
         self.today_datetime_stringified = today_datetime.strftime("%Y-%m-%dT%H:%M:%S")
         self.today_datetime_timestamp = int(today_datetime.timestamp())
 
@@ -76,14 +75,14 @@ class LinkedinCompanyDataEnricher(object):
             df.to_csv(index=False), "text/csv"
         )
 
-    def store_search_log(self, input_parameters):
+    def store_search_log(self):
         """
         Stores search log CSV data into GCP
         """
 
-        search_log_dict = self.map_company(input_parameters["company"])
-        search_log_dict["search_filters"] = input_parameters["search_filters"]
-        searched_company_title = input_parameters["company"]["name"]
+        search_log_dict = self.map_company(self.input_parameters["company"])
+        search_log_dict["search_filters"] = self.input_parameters["search_filters"]
+        searched_company_title = self.input_parameters["company"]["name"]
 
         self.store_data("company_searched", searched_company_title, [search_log_dict])
 
@@ -256,15 +255,15 @@ class LinkedinCompanyDataEnricher(object):
             "employees_education", searched_company_title, employees_education
         )
 
-    def run(self, input_parameters):
+    def run(self):
         """
         Run functions to get and store employees experience and education for target company
         """
-        company_urn = input_parameters["company"]["urn_id"]
-        company_name = input_parameters["company"]["name"]
-        limit = input_parameters["search_filters"]["limit"]
+        company_urn = self.input_parameters["company"]["urn_id"]
+        company_name = self.input_parameters["company"]["name"]
+        limit = self.input_parameters["search_filters"]["limit"]
 
-        self.store_search_log(input_parameters)
+        self.store_search_log()
 
         past_employees_list = self.get_past_employees(company_urn, limit)
 

@@ -13,7 +13,8 @@ employees_experience_last_updated as (
         date_diff(end_date, start_date, month)
       ) as months_in_company,
       if(end_date is null, true, false) as is_current_role,
-      regexp_contains(lower(title), r'analyst|engineer|baz|data|machine learning|developer|architect') as is_role_in_target_list
+      regexp_contains(lower(title), r'analyst|engineer|baz|data|machine learning|developer|architect') as is_role_in_target_list,
+      regexp_contains(lower(title), r'internship') as is_internship
   from employees_experience 
   where rn = 1
 )

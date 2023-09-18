@@ -8,6 +8,7 @@ with past_employees_total_months_in_company as (
     count(title) as number_of_roles
   from {{ ref('stg_linkedinapi__employees_experience_last_updated') }}
   where is_current_role is false
+  and is_internship is false
   group by employee_urn, company_name, is_target_company, are_roles_in_target_list
 
 ),
