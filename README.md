@@ -15,23 +15,23 @@ Personally, on my job hunting process there are three types of information that 
 2. Do I like the company industry? Do I like the type of projects they do?
 3. What is the overall reputation of the company? (I check on Glassdoor and other review places like Trustpilot/Google if they offer a product that can be reviewed)
 
-However, I always found that there was a missing piece of information here. I wanted to know more about the Organization's culture. Most of the people try to find some cues about a company's culture based on what they felt in the interview. This is, they use the rapport they experienced with the interviewer/s and extrapolate it to the company. If I really enjoyed the interview and the interviewer was really nice, then that somehow means that my team and my manager will be also be nice. This is the only cue we have to infer a company's culture, in one hour of interview we can't really know how it is to work there. Is there any other more objective way to find out about this? One thing we can do is to contact one of our future possible colleagues and ask them about it. However, there might be something else we can do...
+However, I always found that there was a missing piece of information here. I wanted to know more about the Organization's culture. Most people try to find some cues about a company's culture based on what they felt in the interview. This is, they interpret the rapport they experienced with the interviewer/s and extrapolate it to the company. If I enjoyed the interview and the interviewer was really nice, then there is a good chance that my team and my manager will also be nice. However, the reality is that in one hour of interview we can't really know how it is to work there and we can't extrapolate this subjective experience to the whole of the company. Is there any other more objective way to find out about this? One thing we can do is to contact one of our future possible colleagues and ask them about it. However, there might be something else we can do...
 
 From experience and from people I'm close with, people tend not to stay for long in a company if it has a bad culture (toxic environment, bad management, bad work/life balance...). This made me wonder, can I infer a company's culture based on how long do employees stay in the company and how long compared to the average they have stayed in previous companies?
 
 
 ## Observations
-Note that even though employees rotation is a useful metric to better understand a company's culture, it might not be very reliable. There are a few reasons:
-- Older employees tend to be less prone to switch companies (can we prove this assumption?) which would skew the data. However, younger employees tend to do more job hopping (can we prove this assumption?)
+Note that even though employees rotation is a useful metric to better understand a company's culture, it might not be very reliable. There are a few reasons why:
+- Older employees tend to be less prone to switch companies (can we prove this assumption?) which would skew the data. On the other hand, younger employees tend to do more job hopping (can we prove this assumption?)
 - Employees might not change jobs because they can't find anything better on the market or the situation of the market is unstable to find another job
 - Each role has different types of employee profile and behaviour. For instance, young software engineerings tend to stay in a company 2-3 years independently of the quality of the company (can we prove this assumption?)
 - Most contractors stay for a defined lenght in the company. We can't tell if a role is full-time or contractor based on the information extracted from Linkedin.
 
-There could be other reasons that I'm missing here, but I wanted to clarify that the results and conclusions here might not be an accurate representation of the culture of a company. However, it is an interesting metric to check and I was curious to perform this analysis, therefore the motivation of this project.
+There could be other reasons that I'm missing here, but I wanted to clarify that the results and conclusions here might not give an accurate representation of the culture of a company. However, it is an interesting metric to check and I was curious to perform this analysis, therefore the motivation of this project.
 
 
 ## Linkedin API
-Linkedin is one of the largest, if not the largest job boards. It takes the role of a professional social network where people add their portfolio and build their network. Therefore, it is the logical place to retrieve our data.
+Linkedin is one of the largest, if not the largest job boards. It takes the role of a professional social network where people add their portfolio and build their network. Therefore, it is the logical place to search for our data.
 
 Linkedin doesn't have a free open API, but thanks to Open Source we can find unofficial APIs like the one we are using here: https://github.com/tomquirk/linkedin-api. This comes with some drawbacks though: 
 - The API is not official, so if too many requests are done, our Linkedin account could be banned. I'm using it only as a personal project so it shouldn't be a risk, but I'm creating a temporary account for the purpose of this project
@@ -42,7 +42,7 @@ Linkedin doesn't have a free open API, but thanks to Open Source we can find uno
 ## Open Source collaboration
 When I first thought about working on this side project, I created my MVP in order to do a first test and see if it would work. However, I realised that the API endpoint I needed to use wasn't working. This is because Linkedin recently implemented some changes in their API endpoint that broke the existing logic.
 
-Therefore, I decided that this was a good opportunity to contribute to an open source community and therefore I took a look at the issue. After playing around doing some reverse engineering with the endpoints that Linkedin calls (checking the "Networks" tab on the browser) and looking at discussions on a Github issue about the topic, I implemented my changed, tested it and created a PR: https://github.com/tomquirk/linkedin-api/pull/332 which has already been merged.
+Therefore, I decided that this was a good opportunity to contribute to an open source community and I decided to take a look at the issue. After playing around, doing some reverse engineering with the endpoints that Linkedin calls (checking the "Networks" tab on the browser) and looking at discussions on a Github issue about the topic, I implemented my changed, tested it and created a PR: https://github.com/tomquirk/linkedin-api/pull/332 which has already been merged.
 
 Having fixed the issue, I was able to start with my project.
 
@@ -81,7 +81,7 @@ As mentioned earlier, the main metric I wanted to take a look is: how long do em
 
 Therefore the metric is calculated as:
 
-```avg_ratio_months_in_target_company_vs_others = average months in target company / average months in previous companies```
+```avg_ratio_months_in_target_company_vs_others = total months in target company / average months in previous companies```
 
 I'll retrieve that metric per employee and then group by company.
 In my final model I have these metrics:
@@ -89,10 +89,10 @@ In my final model I have these metrics:
 - avg_months_in_target_company
 - avg_months_in_other_companies
 
-How do I know what metric values are good? We take as benchmark an average of the top 5 and last 5 companies to work for extracted from different sources when looking for "Best companies to work for" in Google like [this one](https://www.greatplacetowork.co.uk/best-workplaces/2023). We use those values as a reference line and we compare target companies with them
+How do I know what metric values are good? We take as benchmark an average of the top 5 and last 5 companies to work for extracted from different sources when looking for "Best companies to work for" in Google like [this one](https://www.greatplacetowork.co.uk/best-workplaces/2023). We use those values as a reference line and we compare target companies with them.
 
 Notes:
-- I've split calculations between two types of roles: Data/Software and others. This is because I'm applying for Data roles so I'm more interested in metrics regarding these types of roles
+- I've split calculations between two types of roles: Data/Software and others. This is because I'm applying for Data roles so I'm more interested in metrics regarding these types of roles and analysing them in isolation
 - I'm only looking at past roles (not employees currently working at target company) because I want to analyse patients that left. This might skew the data though, since there might be "happy" employees that haven't left the company and I haven't taken them into account. They might be included in a follow up analysis
 - Internships are excluded
 
@@ -100,13 +100,7 @@ Notes:
 
 **Can we prove the assumption that software related roles tend to stay in a company 2-3 years independently of the culture of the company?**
 
-| are_roles_in_target_list | avg_months_in_other_companies | avg_months_in_target_company | number_of_roles |   |
-|--------------------------|-------------------------------|------------------------------|-----------------|---|
-| false                    |                            25 |                           24 |             176 |   |
-| true                     |                            17 |                           19 |             103 |   |
-|                          |                               |                              |                 |   |
-
-Where `are_roles_in_target_list` include any role with the keywords `analyst|engineer|baz|data|machine learning|developer|architect`.
+Where `is_role_in_target_list` include any role with the keywords `analyst|engineer|baz|data|machine learning|developer|architect`.
 
 We'll need to perform a T-test to check if the two populations have different means:
 - Null hypothesis: The two populations have same mean
@@ -135,7 +129,19 @@ p-value is 0.69 so we can't really reject the null hypothesis and we can't say t
 
 In this case we can create two groups: companies rated as "best companies to work for" and "worst companies to work for". Once we get these two groups, we perform another two sample t-test as previously and check our hypothesis. I haven't performed the calculations yet so I leave it as TO DO.
 
-## Conclusions
-I've developed this project as a personal interest on finding out if the quality of the culture of a company can be infered from the employees rotation. We can say for the moment that the outcome is inconclusive. As defined in the drawbacks, that was something more or less expected. However, I still found useful to ran this analysis since it gives me more data in order to evaluate the companies I am applying to.
+However, with the bare eye I noticed that companies on the "best companies to work for" list are on the top of the list when sorted by `avg_ratio_months_in_target_company_vs_others`. This data is public, but I've masked the names of the companies just in case:
 
-This data might be also useful recruiters wanting to know more about a company and other candidates looking to get a better understanding of a company's culture.
+|target_company_name             |avg_ratio_months_in_target_company_vs_others|
+|--------------------------------|--------------------------------------------|
+|Company in top best places to work for A|3.983398693                                 |
+|Company in top best places to work for B|2.977727273                                 |
+|Known company A                 |2.141715116                                 |
+|Known company B                 |1.103                                       |
+|Known company C                 |0.914285714                                 |
+|Company with bad reputation A   |0.609                                       |
+
+
+## Conclusions
+I've developed this project as a personal interest on finding out if the quality of the culture of a company can be infered from the employees rotation. We can say for the moment that the outcome is inconclusive, we need more data to properly observe patterns. As defined in the drawbacks, that was something more or less expected. There are a lot of factors that influence the decision of an employee to stay or leave a company. However, I still found it useful to ran this analysis since it gives me more data in order to evaluate the companies I am applying to.
+
+This data might be also interesting recruiters wanting to know more about a company and other candidates looking to get a better understanding of a company's culture.

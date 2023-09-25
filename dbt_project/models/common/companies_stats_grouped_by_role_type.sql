@@ -28,7 +28,7 @@ past_employees_avg_months_in_company as (
   select
     employee_urn,
     are_roles_in_target_list,
-    avg(if(is_target_company is true, total_months_in_company, null)) as avg_months_in_target_company,
+    sum(if(is_target_company is true, total_months_in_company, null)) as total_months_in_target_company,
     avg(if(is_target_company is false, total_months_in_company, null)) as avg_months_in_other_companies
   from past_employees_total_months_in_company
   group by employee_urn, are_roles_in_target_list
@@ -39,10 +39,10 @@ join_past_employees_data as (
     petc.employee_urn,
     petc.are_roles_in_target_list,
     petc.target_company_name,
-    peam.avg_months_in_target_company,
+    peam.total_months_in_target_company,
     peam.avg_months_in_other_companies,
     petc.number_of_roles,
-    round(peam.avg_months_in_target_company / peam.avg_months_in_other_companies,2) as ratio_months_in_target_company_vs_others
+    round(peam.total_months_in_target_company / peam.avg_months_in_other_companies,2) as ratio_months_in_target_company_vs_others
   from past_employees_target_company petc
   inner join past_employees_avg_months_in_company peam
   on (petc.employee_urn = peam.employee_urn
@@ -57,7 +57,7 @@ companies_avg_ratio as (
     ]) }} as company_grouped_by_role_type_id,
     target_company_name,
     are_roles_in_target_list,
-    avg(avg_months_in_target_company) as avg_months_in_target_company,
+    avg(total_months_in_target_company) as avg_months_in_target_company,
     avg(avg_months_in_other_companies) as avg_months_in_other_companies,
     avg(ratio_months_in_target_company_vs_others) as avg_ratio_months_in_target_company_vs_others,
     sum(number_of_roles) as number_of_roles
