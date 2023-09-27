@@ -2,7 +2,7 @@
 
 > This project attempts to infer the quality of an organization's culture based on the employees rotation, i.e. is the time an employee stays at a company an indicator of how good the company is to work for? For this, I used an Open Source Linkedin scraper to retrieve employee's portfolio data and applied data transformations to calculate the metrics that would help me determine the quality of a given company's culture. 
 >
-> This project will help me to know more about the companies I'm interested in applying for and therefore make a more informed decisions on which ones to prioritise.
+> This project will help me gain insight into the companies I'm interested in applying for and therefore make a more a informed decision on which ones to prioritise.
 >
 > On the development of this project, I've had the chance to contribute to an Open Source library, perform analysis and prove assumptions via hypothesis testing
 
@@ -15,9 +15,9 @@ Personally, on my job hunting process there are three types of information that 
 2. Do I like the company industry? Do I like the type of projects they do?
 3. What is the overall reputation of the company? (I check on Glassdoor and other review places like Trustpilot/Google if they offer a product that can be reviewed)
 
-However, I always found that there was a missing piece of information here. I wanted to know more about the Organization's culture. Most people try to find some cues about a company's culture based on what they felt in the interview. This is, they interpret the rapport they experienced with the interviewer/s and extrapolate it to the company. If I enjoyed the interview and the interviewer was really nice, then there is a good chance that my team and my manager will also be nice. However, the reality is that in one hour of interview we can't really know how it is to work there and we can't extrapolate this subjective experience to the whole of the company. Is there any other more objective way to find out about this? One thing we can do is to contact one of our future possible colleagues and ask them about it. However, there might be something else we can do...
+However, I always found that there was a missing piece of information here. I wanted to know more about the Organization's culture. Most people try to find some cues about a company's culture based on how they have felt during an interview process. This is, they interpret the rapport they experienced with the interviewer/s and extrapolate it to the company. If I enjoyed the interview and the interviewer was really nice, then there is a good chance that my team and my manager will also be nice. However, the reality is that in one hour of interview we can't really know how it is to work there and we can't extrapolate this subjective experience to the whole of the company. Is there any other more objective way to find out about this? One thing we can do is to contact one of our future possible colleagues and ask them about it. However, there might be something else we can do...
 
-From experience and from people I'm close with, people tend not to stay for long in a company if it has a bad culture (toxic environment, bad management, bad work/life balance...). This made me wonder, can I infer a company's culture based on how long do employees stay in the company and how long compared to the average they have stayed in previous companies?
+From experience and from people I'm close with, people tend not to stay for long in a company if it has a bad culture (toxic environment, bad management, poor work/life balance...). This made me wonder, can I infer a company's culture based on how long do employees stay in the company and how long compared to the average they have stayed in previous companies?
 
 
 ## Observations
@@ -35,14 +35,14 @@ Linkedin is one of the largest, if not the largest job boards. It takes the role
 
 Linkedin doesn't have a free open API, but thanks to Open Source we can find unofficial APIs like the one we are using here: https://github.com/tomquirk/linkedin-api. This comes with some drawbacks though: 
 - The API is not official, so if too many requests are done, our Linkedin account could be banned. I'm using it only as a personal project so it shouldn't be a risk, but I'm creating a temporary account for the purpose of this project
-- I can only extract employees experience data up to 3rd degree connections in my network on Linkedin. I would need to connect with many people with my dummy account in order to access more contacts, which is not feasable. One solution could be to use the 7 day Premium trial on my dummy account, but I haven't tested that yet
+- I can only extract employees experience data up to 3rd degree connections in my network on Linkedin. I would need to connect with many people with my dummy account in order to access more contacts, which is not feasible. One solution could be to use the 7 day Premium trial on my dummy account, but I haven't tested that yet
 - The API only returns the last 5 job experiences, but that might be enough for our purposes
 
 
 ## Open Source collaboration
 When I first thought about working on this side project, I created my MVP in order to do a first test and see if it would work. However, I realised that the API endpoint I needed to use wasn't working. This is because Linkedin recently implemented some changes in their API endpoint that broke the existing logic.
 
-Therefore, I decided that this was a good opportunity to contribute to an open source community and I decided to take a look at the issue. After playing around, doing some reverse engineering with the endpoints that Linkedin calls (checking the "Networks" tab on the browser) and looking at discussions on a Github issue about the topic, I implemented my changed, tested it and created a PR: https://github.com/tomquirk/linkedin-api/pull/332 which has already been merged.
+Therefore, I decided that this was a good opportunity to contribute to an open source community and I decided to take a look at the issue. After playing around, doing some reverse engineering with the endpoints that Linkedin calls (checking the "Networks" tab on the browser) and looking at discussions on a Github issue about the topic, I implemented my change, tested it and created a PR: https://github.com/tomquirk/linkedin-api/pull/332 which has already been merged.
 
 Having fixed the issue, I was able to start with my project.
 
@@ -142,6 +142,6 @@ However, with the bare eye I noticed that companies on the "best companies to wo
 
 
 ## Conclusions
-I've developed this project as a personal interest on finding out if the quality of the culture of a company can be infered from the employees rotation. We can say for the moment that the outcome is inconclusive, we need more data to properly observe patterns. As defined in the drawbacks, that was something more or less expected. There are a lot of factors that influence the decision of an employee to stay or leave a company. However, I still found it useful to ran this analysis since it gives me more data in order to evaluate the companies I am applying to.
+I've developed this project out of personal interest in finding out if the quality of a company's culture can be infered from the employees rotation. We can say for the moment that the outcome is inconclusive, we need more data to properly observe patterns. As defined in the drawbacks, that was something more or less expected. There are a lot of factors that influence the decision of an employee to stay or leave a company. However, I still found it useful to ran this analysis since it gives me more data in order to evaluate the companies I am applying to.
 
-This data might be also interesting recruiters wanting to know more about a company and other candidates looking to get a better understanding of a company's culture.
+This data might be also interesting for recruiters wanting to know more about a company and other candidates looking to get a better understanding of a company's culture.
